@@ -1,4 +1,5 @@
 from room import Room
+from player import Player
 
 # Declare all the rooms
 
@@ -49,3 +50,150 @@ room['treasure'].s_to = room['narrow']
 # Print an error message if the movement isn't allowed.
 #
 # If the user enters "q", quit the game.
+
+# PARSER
+def parser():
+    print(f"\nYou are in {room[player.current_room].name}")
+    print(room[player.current_room].description)
+    print("Enter q to quit:")
+    print("Enter n, s, e, w to go either north, south, east, or west:")
+    return input("")
+
+
+player = Player("Eloy", "outside")
+
+location = room[player.current_room]
+
+on = True
+
+while on:
+    print(f"\nYou are in {location.name}")
+    print(location.description)
+    print("Enter q to quit:")
+    print("Enter n, s, e, w to go either north, south, east, or west:")
+    player_input = input("")
+
+    if player_input == "q":
+        on = False
+    elif player_input == "n":
+        if hasattr(location, "n_to"):
+            location = location.n_to
+            continue
+        else:
+            print("\nThere is nothing that way.\n")
+            continue
+    elif player_input == "s":
+        if hasattr(location, "s_to"):
+            location = location.s_to
+            continue
+        else:
+            print("\nThere is nothing that way.\n")
+            continue
+    elif player_input == "e":
+        if hasattr(location, "e_to"):
+            location = location.e_to
+            continue
+        else:
+            print("\nThere is nothing that way.\n")
+            continue
+    elif player_input == "w":
+        if hasattr(location, "w_to"):
+            location = location.w_to
+            continue
+        else:
+            print("\nThere is nothing that way.\n")
+            continue
+    else:
+        print("\nI did not understand what you wrote.\n")
+
+
+
+
+"""
+while on: ################################################################################################## In outside
+    player.current_room = "outside"
+    player_input = parser()
+
+    if player_input.lower() == "q":
+        on = False
+
+    elif player_input.lower() == "n":
+        player.current_room = "overlook"
+        ################################################################################################################################## In overlook
+        while on:
+            player.current_room = "overlook"
+            player_input = parser()
+
+            if player_input.lower() == "q":
+                on = False
+
+            elif player_input.lower() == "n":
+                print("\nYou jumped into the chasm and died.\n")
+                on = False
+
+            elif player_input.lower() == "w":
+                player.current_room = "foyer"
+########################################################################################################################## In foyer
+                while on:
+                    player.current_room = "foyer"
+                    player_input = parser()
+
+                    if player_input.lower() == "q":
+                        on = False
+
+                    elif player_input.lower() == "n":
+                        player.current_room = "narrow"
+                        #################################################################################### In narrow
+                        while on:
+                            player.current_room = "narrow"
+                            player_input = parser()
+
+                            if player_input.lower() == "q":
+                                on = False
+
+                            elif player_input.lower() == "s":
+                                break
+
+                            elif player_input.lower() == "w":
+                                player.current_room = "treasure"
+                                ###################################################### In treasure
+                                while on:
+                                    player.current_room = "treasure"
+                                    player_input = parser()
+
+                                    if player_input.lower() == "q":
+                                        on = False
+
+                                    elif player_input.lower() == "e":
+                                        break
+
+                                    elif player_input.lower() == "n":
+                                        print("You exited the cave. Thank you for playing!")
+                                        on = False
+
+                                    else:
+                                        print("\nThere is nothing that way.\n")
+                                        continue
+######################################################################################### In treasure
+                            else:
+                                print("\nThere is nothing that way.\n")
+                                continue
+############################################################################################################## In narrow
+                    elif player_input.lower() == "e":
+                        break
+
+                    else:
+                        print("\nThere is nothing that way.\n")
+                        continue
+########################################################################################################################### In foyer
+            elif player_input.lower() == "s":
+                break
+
+            else:
+                print("\nThere is nothing that way.\n")
+                continue
+######################################################################################################################################### In overlook
+    else:
+        print("\nThere is nothing that way.\n")
+        continue
+"""
