@@ -60,15 +60,14 @@ def parser():
     return input("")
 
 
-player = Player("Eloy", "outside")
+player = Player("Eloy", room["outside"])
 
-location = room[player.current_room]
 
 on = True
 
 while on:
-    print(f"\nYou are in {location.name}")
-    print(location.description)
+    print(f"\nYou are in {player.current_room.name}")
+    print(player.current_room.description)
     print("Enter q to quit:")
     print("Enter n, s, e, w to go either north, south, east, or west:")
     player_input = input("")
@@ -76,29 +75,29 @@ while on:
     if player_input == "q":
         on = False
     elif player_input == "n":
-        if hasattr(location, "n_to"):
-            location = location.n_to
+        if hasattr(player.current_room, "n_to"):
+            player.current_room = player.current_room.n_to
             continue
         else:
             print("\nThere is nothing that way.\n")
             continue
     elif player_input == "s":
-        if hasattr(location, "s_to"):
-            location = location.s_to
+        if hasattr(player.current_room, "s_to"):
+            player.current_room = player.current_room.s_to
             continue
         else:
             print("\nThere is nothing that way.\n")
             continue
     elif player_input == "e":
-        if hasattr(location, "e_to"):
-            location = location.e_to
+        if hasattr(player.current_room, "e_to"):
+            player.current_room = player.current_room.e_to
             continue
         else:
             print("\nThere is nothing that way.\n")
             continue
     elif player_input == "w":
-        if hasattr(location, "w_to"):
-            location = location.w_to
+        if hasattr(player.current_room, "w_to"):
+            player.current_room = player.current_room.w_to
             continue
         else:
             print("\nThere is nothing that way.\n")
