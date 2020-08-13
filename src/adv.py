@@ -1,25 +1,26 @@
 from room import Room
 from player import Player
+from item import Item
 
 # Declare all the rooms
 
 room = {
     'outside':  Room("Outside Cave Entrance",
-                     "North of you, the cave mount beckons"),
+                     "North of you, the cave mount beckons", [ Item("sword", "a long sword"), Item("lantern", "a small lantern"), Item("coat", "a big coat") ]),
 
     'foyer':    Room("Foyer", """Dim light filters in from the south. Dusty
-passages run north and east."""),
+passages run north and east.""", [ Item("gun", "a shotgun"), Item("ring", "plain steel ring") ]),
 
     'overlook': Room("Grand Overlook", """A steep cliff appears before you, falling
 into the darkness. Ahead to the north, a light flickers in
-the distance, but there is no way across the chasm."""),
+the distance, but there is no way across the chasm.""", [ Item("shells", "for the shotgun") ]),
 
     'narrow':   Room("Narrow Passage", """The narrow passage bends here from west
-to north. The smell of gold permeates the air."""),
+to north. The smell of gold permeates the air.""", [ Item("key", "a rusty key") ]),
 
     'treasure': Room("Treasure Chamber", """You've found the long-lost treasure
 chamber! Sadly, it has already been completely emptied by
-earlier adventurers. The only exit is to the south."""),
+earlier adventurers. The only exit is to the south.""", [ Item("pencil", "a regular pencil"), Item("paper", "a note saying \"I got here first hehe\"") ]),
 }
 
 
@@ -51,13 +52,13 @@ room['treasure'].s_to = room['narrow']
 #
 # If the user enters "q", quit the game.
 
-# PARSER
-def parser():
-    print(f"\nYou are in {room[player.current_room].name}")
-    print(room[player.current_room].description)
-    print("Enter q to quit:")
-    print("Enter n, s, e, w to go either north, south, east, or west:")
-    return input("")
+# Check for items in room
+def items_in(items):
+    if len(items) == 0:
+        print("- There are no items.")
+    else:
+        for item in items:
+            print(f"- {item.name.capitalize()}")
 
 
 player = Player("Eloy", room["outside"])
@@ -68,42 +69,82 @@ on = True
 while on:
     print(f"\nYou are in {player.current_room.name}")
     print(player.current_room.description)
-    print("Enter q to quit:")
+    print("Items in room:")
+    items_in(player.current_room.items)
+    print("Enter i for Inventory, take [item] to take item, drop [item] to drop item, look [item] to get item description. Enter q to quit:")
     print("Enter n, s, e, w to go either north, south, east, or west:")
     player_input = input("")
 
-    if player_input == "q":
-        on = False
-    elif player_input == "n":
-        if hasattr(player.current_room, "n_to"):
-            player.current_room = player.current_room.n_to
-            continue
+    if len(player_input) == 1:
+        if player_input == "q":
+            on = False
+        elif player_input == "i":
+            print("\nInventory:") ###################################################### Inventory
+            if len(player.items) == 0:
+                print("There are no items in your Inventory.")
+            else:
+                items_in(player.items)
+        elif player_input == "n":
+            if hasattr(player.current_room, "n_to"):
+                player.current_room = player.current_room.n_to
+                continue
+            else:
+                print("\nThere is nothing that way.\n")
+                continue
+        elif player_input == "s":
+            if hasattr(player.current_room, "s_to"):
+                player.current_room = player.current_room.s_to
+                continue
+            else:
+                print("\nThere is nothing that way.\n")
+                continue
+        elif player_input == "e":
+            if hasattr(player.current_room, "e_to"):
+                player.current_room = player.current_room.e_to
+                continue
+            else:
+                print("\nThere is nothing that way.\n")
+                continue
+        elif player_input == "w":
+            if hasattr(player.current_room, "w_to"):
+                player.current_room = player.current_room.w_to
+                continue
+            else:
+                print("\nThere is nothing that way.\n")
+                continue
         else:
-            print("\nThere is nothing that way.\n")
-            continue
-    elif player_input == "s":
-        if hasattr(player.current_room, "s_to"):
-            player.current_room = player.current_room.s_to
-            continue
-        else:
-            print("\nThere is nothing that way.\n")
-            continue
-    elif player_input == "e":
-        if hasattr(player.current_room, "e_to"):
-            player.current_room = player.current_room.e_to
-            continue
-        else:
-            print("\nThere is nothing that way.\n")
-            continue
-    elif player_input == "w":
-        if hasattr(player.current_room, "w_to"):
-            player.current_room = player.current_room.w_to
-            continue
-        else:
-            print("\nThere is nothing that way.\n")
-            continue
+            print("\nI did not understand what you wrote.\n")
     else:
-        print("\nI did not understand what you wrote.\n")
+        if player_input[:4] == "take": ################################################################# Take item
+            if player_input[5:] in [i.name for i in player.current_room.items]:
+                for item in player.current_room.items:
+                    if item.name == player_input[5:]:
+                        player.items.append(item)
+                        player.current_room.items.remove(item)
+                        item.on_take()
+                        continue
+            else:
+                print("\nThat item is not in this room.")
+        elif player_input[:4] == "drop": ############################################################### Drop item
+            if player_input[5:] in [i.name for i in player.items]:
+                for item in player.items:
+                    if item.name == player_input[5:]:
+                        player.current_room.items.append(item)
+                        player.items.remove(item)
+                        item.on_drop()
+                        continue
+            else:
+                print("\nThat item is not in your inventory.")
+        elif player_input[:4] == "look": ################################################################# Look item
+            if player_input[5:] in [i.name for i in player.items]:
+                for item in player.items:
+                    if item.name == player_input[5:]:
+                        print("\n" + item.name.capitalize() + ":")
+                        print(item.description)
+            else:
+                print("\nThat item is not in your inventory. Put it in your inventory to look at it.")
+        else:
+            print("\nI did not understand what you wrote.\n")
 
 
 
